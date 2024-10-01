@@ -1,31 +1,3 @@
-//
-//  ImageCacheProtocol.swift
-//  ImageGallerySwiftUI
-//
-//  Created by Office on 29/09/24.
-//
-
-
-//import UIKit
-//
-//protocol ImageCacheProtocol {
-//    func getImage(for url: URL) -> UIImage?
-//    func saveImage(_ image: UIImage, for url: URL)
-//}
-//
-//class ImageCache: ImageCacheProtocol {
-//    private var cache = NSCache<NSURL, UIImage>()
-//    
-//    func getImage(for url: URL) -> UIImage? {
-//        return cache.object(forKey: url as NSURL)
-//    }
-//    
-//    func saveImage(_ image: UIImage, for url: URL) {
-//        cache.setObject(image, forKey: url as NSURL)
-//    }
-//}
-
-
 import UIKit
 
 protocol ImageCacheProtocol {

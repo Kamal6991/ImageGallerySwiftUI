@@ -1,11 +1,5 @@
-//
-//  ImageGallerySwiftUITests.swift
-//  ImageGallerySwiftUITests
-//
-//  Created by Office on 29/09/24.
-//
-
 import XCTest
+
 @testable import ImageGallerySwiftUI
 
 final class ImageGallerySwiftUITests: XCTestCase {

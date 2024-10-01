@@ -1,7 +1,5 @@
 import SwiftUI
 
-import SwiftUI
-
 struct ImageCell: View {
     let photo: Photo
     @ObservedObject var viewModel: ImageGalleryViewModel

@@ -1,10 +1,3 @@
-//
-//  NetworkClientProtocol.swift
-//  ImageGallerySwiftUI
-//
-//  Created by Office on 29/09/24.
-//
-
 
 import Foundation
 
