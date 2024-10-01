@@ -7,6 +7,7 @@ struct ImageDetailView: View {
     @State private var offset: CGSize = .zero // Offset for swipe animation
     @State private var scale: CGFloat = 1.0 // Scale for zooming
     @State private var showHint: Bool = true // Control the display of the hint
+    private let placeholderImage = UIImage(named: Photo.placeholderImageName) // Placeholder image
     
     // Initializer to pass the starting photo and its index
     init(photo: Photo, index: Int, viewModel: ImageGalleryViewModel) {
@@ -33,12 +34,18 @@ struct ImageDetailView: View {
                                 .aspectRatio(contentMode: .fit)
                                 .scaleEffect(scale) // Apply zoom scale
                                 .offset(x: offset.width, y: 0) // Apply swipe offset
-                                
                                 .gesture(zoomGesture().simultaneously(with: swipeGesture())) // Combine gestures
                                 .frame(width: geometry.size.width, height: geometry.size.height * 0.7) // Adjust image size
                         }
                     } else {
-                        ProgressView("Loading image...")
+                        // Placeholder with loading indicator in the center
+                        ZStack {
+                            Image(uiImage: placeholderImage!)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width, height: geometry.size.height * 0.7)
+                            ProgressView().frame(width: geometry.size.width, height: geometry.size.height * 0.7)
+                        }
                     }
                     
                     // Show hint for zoom and swipe functionality
@@ -68,8 +75,10 @@ struct ImageDetailView: View {
     private func loadImage(for urlString: String) {
         if let url = URL(string: urlString) {
             viewModel.loadImage(for: url) { loadedImage in
-                self.image = loadedImage
-                self.offset = .zero // Reset swipe offset
+                withAnimation {
+                    self.image = loadedImage ?? placeholderImage // If no image, use placeholder
+                }
+                self.offset = .zero // Reset swipe offset after the image is loaded
                 self.scale = 1.0 // Reset zoom scale
             }
         }
@@ -78,9 +87,15 @@ struct ImageDetailView: View {
     // Move to the next image, if it exists
     private func nextImage() {
         guard currentIndex < viewModel.photos.count - 1 else { return }
+        
         withAnimation {
             offset = CGSize(width: -UIScreen.main.bounds.width, height: 0) // Swipe left animation
         }
+        
+        // Immediately set the placeholder image while the next image is loading
+        self.image = placeholderImage
+        
+        // Load the next image after swipe
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             currentIndex += 1
             loadImage(for: viewModel.photos[currentIndex].url)
@@ -90,9 +105,15 @@ struct ImageDetailView: View {
     // Move to the previous image, if it exists
     private func previousImage() {
         guard currentIndex > 0 else { return }
+        
         withAnimation {
             offset = CGSize(width: UIScreen.main.bounds.width, height: 0) // Swipe right animation
         }
+        
+        // Immediately set the placeholder image while the previous image is loading
+        self.image = placeholderImage
+        
+        // Load the previous image after swipe
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             currentIndex -= 1
             loadImage(for: viewModel.photos[currentIndex].url)
@@ -129,3 +150,4 @@ struct ImageDetailView: View {
             }
     }
 }
+ 

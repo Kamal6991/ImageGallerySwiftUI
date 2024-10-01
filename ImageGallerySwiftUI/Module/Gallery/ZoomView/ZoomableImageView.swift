@@ -25,6 +25,7 @@ struct ZoomableImageView: View {
                     .gesture(
                         zoomGesture(for: geometry.size)
                             .simultaneously(with: panGesture(for: geometry.size))
+                            .simultaneously(with: doubleTapGesture(for: geometry.size)) // Add double-tap gesture
                     )
                     .onAppear {
                         self.resetZoomAndOffset()
@@ -85,6 +86,24 @@ struct ZoomableImageView: View {
             .onEnded { _ in
                 // Save the last offset for future drag gestures
                 self.lastOffset = self.offset
+            }
+    }
+    
+    // Double-tap gesture for zooming in and out
+    private func doubleTapGesture(for size: CGSize) -> some Gesture {
+        TapGesture(count: 2)
+            .onEnded {
+                withAnimation(.easeInOut) {
+                    if self.scale == self.minScale {
+                        // Zoom in to maxScale
+                        self.scale = self.maxScale
+                    } else {
+                        // Zoom out to minScale
+                        self.scale = self.minScale
+                        self.offset = .zero // Reset offset when zooming out
+                    }
+                    self.lastScale = self.scale
+                }
             }
     }
     
